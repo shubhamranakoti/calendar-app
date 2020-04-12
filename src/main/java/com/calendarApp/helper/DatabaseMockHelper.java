@@ -2,6 +2,7 @@ package com.calendarApp.helper;
 
 import com.calendarApp.model.*;
 import com.calendarApp.model.ImmutableBooking;
+import com.calendarApp.model.ImmutableSlotAvailability;
 import com.calendarApp.model.ImmutableUserDateInfo;
 import com.calendarApp.model.ImmutableValidationResult;
 import com.calendarApp.model.ImmutableUser;
@@ -34,7 +35,7 @@ public class DatabaseMockHelper {
                 .entity(userToAdd).build();
     }
 
-    public static ValidationResult addAvailableSlots(SlotAvailabilityRequest request, UUID id) {
+    public static ValidationResult addAvailableSlots(SlotAvailability request, UUID id) {
         DatabaseMock databaseMock = DatabaseMock.getInstance();
         //check if user id is valid and corresponding user exists
         if(!isValidUUID(id) || !isValidUser(id, databaseMock.getUsers())){
@@ -47,9 +48,27 @@ public class DatabaseMockHelper {
                 ImmutableUserDateInfo.builder()
                         .availability(ImmutableList.of())
                         .bookings(new HashMap<>()).build());
-        userDateInfo.getAvailability().addAll(request.getSlots());
-        dateTimeMap.put(request.getDate(), userDateInfo);
+        dateTimeMap.put(request.getDate(), ImmutableUserDateInfo.builder().from(userDateInfo)
+                .addAllAvailability(request.getSlots()).build());
         return ImmutableValidationResult.builder().errors(ImmutableList.of()).entity(request).build();
+    }
+
+    public static ValidationResult getAvailableSlots(UUID id) {
+        DatabaseMock databaseMock = DatabaseMock.getInstance();
+        //check if user id is valid and corresponding user exists
+        if(!isValidUUID(id) || !isValidUser(id, databaseMock.getUsers())){
+            return ImmutableValidationResult.builder()
+                    .errors(Collections.singletonList(Constants.INVALID_USER))
+                    .build();
+        }
+        HashMap<LocalDate, UserDateInfo> dateTimeMap = databaseMock.getUserSlotInfo().get(id);
+        ArrayList<SlotAvailability> availabilities = new ArrayList<>();
+        dateTimeMap.entrySet().stream().forEach(entry ->
+                availabilities.add(ImmutableSlotAvailability
+                        .builder().date(entry.getKey())
+                        .slots(entry.getValue().getAvailability()).build())
+        );
+        return ImmutableValidationResult.builder().errors(ImmutableList.of()).entity(availabilities).build();
     }
 
     public static ValidationResult processReserveRequest(BookingRequest request, UUID hostId) {

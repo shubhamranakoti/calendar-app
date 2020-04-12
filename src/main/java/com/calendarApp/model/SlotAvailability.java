@@ -1,20 +1,19 @@
 package com.calendarApp.model;
 
-import com.calendarApp.model.ImmutableSlotAvailabilityRequest;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;
+import com.calendarApp.model.ImmutableSlotAvailability;
 
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.UUID;
 
 @Value.Immutable
-@JsonSerialize(as = ImmutableSlotAvailabilityRequest.class)
-@JsonDeserialize(as = ImmutableSlotAvailabilityRequest.class)
+@JsonSerialize(as = ImmutableSlotAvailability.class)
+@JsonDeserialize(as = ImmutableSlotAvailability.class)
 
-public interface SlotAvailabilityRequest {
+public interface SlotAvailability {
     LocalDate getDate();
     Set<Time> getSlots();
 }

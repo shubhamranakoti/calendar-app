@@ -2,7 +2,7 @@ package com.calendarApp.resource;
 
 import com.calendarApp.helper.DatabaseMockHelper;
 import com.calendarApp.model.BookingRequest;
-import com.calendarApp.model.SlotAvailabilityRequest;
+import com.calendarApp.model.SlotAvailability;
 import com.calendarApp.model.User;
 import com.calendarApp.model.ValidationResult;
 
@@ -36,7 +36,7 @@ public class CalendarResource {
 
     @PUT
     @Path("/user/{id}/slots")
-    public Response addSlotsAvailability(SlotAvailabilityRequest request, @PathParam("id") UUID id) {
+    public Response addSlotsAvailability(SlotAvailability request, @PathParam("id") UUID id) {
         try {
             ValidationResult result = DatabaseMockHelper.addAvailableSlots(request, id);
             if(!result.getErrors().isEmpty()) {
@@ -49,8 +49,22 @@ public class CalendarResource {
         }
     }
 
+    @GET
+    @Path("/user/{id}/slots")
+    public Response getAvailableSlots(BookingRequest request, @PathParam("id") UUID id) {
+        try {
+            ValidationResult result = DatabaseMockHelper.getAvailableSlots(id);
+            if(!result.getErrors().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
+            }
+            return Response.ok().entity(result).build();
+        } catch (Exception ex) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
     @PUT
-    @Path("/user/{id}/bookSlots")
+    @Path("/user/{id}/reserve")
     public Response bookSlotsAvailability(BookingRequest request, @PathParam("id") UUID hostId) {
         try {
             ValidationResult result = DatabaseMockHelper.processReserveRequest(request, hostId);
