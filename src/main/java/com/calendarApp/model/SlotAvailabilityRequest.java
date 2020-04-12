@@ -3,7 +3,6 @@ package com.calendarApp.model;
 import com.calendarApp.model.ImmutableSlotAvailabilityRequest;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.collect.ImmutableSet;
 import org.immutables.value.Value;
 
 import java.sql.Time;

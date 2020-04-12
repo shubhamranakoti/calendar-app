@@ -2,6 +2,7 @@ package com.calendarApp.state;
 
 import com.calendarApp.model.Booking;
 import com.calendarApp.model.User;
+import com.calendarApp.model.UserDateInfo;
 
 import java.sql.Time;
 import java.time.LocalDate;
@@ -14,16 +15,15 @@ import java.util.UUID;
  * Singleton class to mock database
  */
 public final class DatabaseMock {
-    private HashMap<UUID, HashMap<LocalDate, Set<Time>>> userAvailabilitySlotInfo;
+    private HashMap<UUID, HashMap<LocalDate, UserDateInfo>> userAvailabilitySlotInfo;
     private HashMap<UUID, User> users;
-    HashMap<LocalDate, ArrayList<Booking>> calendarBookings;
+    HashMap<UUID, Booking> bookingsInfo;
 
     static DatabaseMock database = null;
 
     private DatabaseMock() {
         userAvailabilitySlotInfo = new HashMap<>();
         users = new HashMap<>();
-        calendarBookings = new HashMap<>();
     }
 
     public static DatabaseMock getInstance() {
@@ -33,15 +33,14 @@ public final class DatabaseMock {
         return database;
     }
 
-    public HashMap<UUID, HashMap<LocalDate, Set<Time>>> getUserSlotInfo() {
+    public HashMap<UUID, HashMap<LocalDate, UserDateInfo>> getUserSlotInfo() {
         return userAvailabilitySlotInfo;
     }
 
     public HashMap<UUID, User> getUsers() {
         return users;
     }
-
-    public HashMap<LocalDate, ArrayList<Booking>> getCalendarBookings() {
-        return calendarBookings;
+    public HashMap<UUID, Booking> getBookingsInfo() {
+        return bookingsInfo;
     }
 }

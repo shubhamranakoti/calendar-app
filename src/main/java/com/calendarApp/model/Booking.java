@@ -13,9 +13,6 @@ import java.util.UUID;
 @JsonSerialize(as = ImmutableBooking.class)
 @JsonDeserialize(as = ImmutableBooking.class)
 public interface Booking {
-    default UUID getId() {
-        return UUID.randomUUID();
-    };
     UUID getHost();
     UUID getAttendee();
     LocalDate getDate();

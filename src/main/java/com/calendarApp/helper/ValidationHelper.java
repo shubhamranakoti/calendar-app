@@ -1,6 +1,7 @@
 package com.calendarApp.helper;
 
 import com.calendarApp.model.User;
+import com.calendarApp.model.UserDateInfo;
 
 import java.sql.Time;
 import java.time.LocalDate;
@@ -28,12 +29,12 @@ public class ValidationHelper {
     }
 
     public static boolean isSlotAvailable(UUID userId, LocalDate date, Time time,
-                                          HashMap<UUID, HashMap<LocalDate, Set<Time>>> userAvailabilitySlotInfo) {
-        HashMap<LocalDate, Set<Time>> dateAvailabilityMap = userAvailabilitySlotInfo.get(userId);
+                                          HashMap<UUID, HashMap<LocalDate, UserDateInfo>> userAvailabilitySlotInfo) {
+        HashMap<LocalDate, UserDateInfo> dateAvailabilityMap = userAvailabilitySlotInfo.get(userId);
         if(!dateAvailabilityMap.containsKey(date)) {
             return false;
         }
-        Set<Time> availableTimeSlots = dateAvailabilityMap.get(date);
-        return availableTimeSlots.contains(time);
+        UserDateInfo userDateInfo = dateAvailabilityMap.get(date);
+        return userDateInfo.getAvailability().contains(time);
     };
 }

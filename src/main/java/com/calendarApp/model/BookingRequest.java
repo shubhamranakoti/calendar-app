@@ -2,7 +2,6 @@ package com.calendarApp.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.collect.ImmutableSet;
 import org.immutables.value.Value;
 import com.calendarApp.model.ImmutableBookingRequest;
 
