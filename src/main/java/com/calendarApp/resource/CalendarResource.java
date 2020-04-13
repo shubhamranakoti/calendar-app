@@ -1,6 +1,6 @@
 package com.calendarApp.resource;
 
-import com.calendarApp.helper.DatabaseMockHelper;
+import com.calendarApp.helper.CalendarHelper;
 import com.calendarApp.model.BookingRequest;
 import com.calendarApp.model.SlotAvailability;
 import com.calendarApp.model.User;
@@ -26,7 +26,7 @@ public class CalendarResource {
     @Path("/user")
     public Response registerUser(User user) {
         try {
-            ValidationResult result = DatabaseMockHelper.addUser(user);
+            ValidationResult result = CalendarHelper.addUser(user);
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
@@ -47,7 +47,7 @@ public class CalendarResource {
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
-            result = DatabaseMockHelper.addAvailableSlots(request, id);
+            result = CalendarHelper.addAvailableSlots(request, id);
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
@@ -66,7 +66,7 @@ public class CalendarResource {
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
-            result = DatabaseMockHelper.getAvailableSlots(id);
+            result = CalendarHelper.getAvailableSlots(id);
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
@@ -84,7 +84,7 @@ public class CalendarResource {
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
-            result = DatabaseMockHelper.processReserveRequest(request, hostId);
+            result = CalendarHelper.processReserveRequest(request, hostId);
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }

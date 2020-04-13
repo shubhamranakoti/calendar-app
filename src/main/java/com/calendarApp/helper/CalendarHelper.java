@@ -9,13 +9,14 @@ import com.calendarApp.model.ImmutableUser;
 import com.calendarApp.state.DatabaseMock;
 import com.google.common.collect.ImmutableList;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.util.*;
 
 import static com.calendarApp.helper.Constants.*;
 import static com.calendarApp.helper.ValidationHelper.*;
 
-public class DatabaseMockHelper {
+public class CalendarHelper {
     public static ValidationResult addUser(User user) {
         DatabaseMock databaseMock = DatabaseMock.getInstance();
         //check if user with same username already exists
@@ -94,8 +95,14 @@ public class DatabaseMockHelper {
         // remove from available slot of host and attendee
         UserDateInfo hostUserDateInfo = databaseMock.getUserSlotInfo().get(hostId).get(request.getDate());
         UserDateInfo attendeeUserDateInfo = databaseMock.getUserSlotInfo().get(attendeeId).get(request.getDate());
-        hostUserDateInfo.getAvailability().remove(request.getTime());
-        attendeeUserDateInfo.getAvailability().remove(request.getTime());
+        Set<Time> availability = hostUserDateInfo.getAvailability();
+        Set<Time> updatedHostAvailability = new HashSet<>();
+        updatedHostAvailability.addAll(availability);
+        updatedHostAvailability.remove(request.getTime());
+        availability = attendeeUserDateInfo.getAvailability();
+        Set<Time> updatedAttendeeAvailability = new HashSet<>();
+        updatedAttendeeAvailability.addAll(availability);
+        updatedAttendeeAvailability.remove(request.getTime());
 
         // add booking details to host and attendee
         Booking booking = ImmutableBooking.builder()
@@ -106,8 +113,12 @@ public class DatabaseMockHelper {
                 .build();
         UUID bookingId = UUID.randomUUID();
         databaseMock.getBookingsInfo().put(bookingId, booking);
+        hostUserDateInfo = ImmutableUserDateInfo.builder().from(hostUserDateInfo).availability(updatedHostAvailability).build();
+        attendeeUserDateInfo = ImmutableUserDateInfo.builder().from(hostUserDateInfo).availability(updatedAttendeeAvailability).build();
         hostUserDateInfo.getBookings().put(request.getTime(), bookingId);
         attendeeUserDateInfo.getBookings().put(request.getTime(), bookingId);
+        databaseMock.getUserSlotInfo().get(hostId).put(request.getDate(), hostUserDateInfo);
+        databaseMock.getUserSlotInfo().get(attendeeId).put(request.getDate(), attendeeUserDateInfo);
         return ImmutableValidationResult.builder()
                 .errors(ImmutableList.of())
                 .entity(booking).build();
