@@ -23,8 +23,6 @@ public class DatabaseMockHelper {
             return ImmutableValidationResult.builder()
                     .errors(Collections.singletonList(Constants.DUPLICATE_USER))
                     .entity(user).build();
-
-
         }
         UUID userId = UUID.randomUUID();
         User userToAdd = ImmutableUser.builder().from(user).id(userId).build();
@@ -37,12 +35,6 @@ public class DatabaseMockHelper {
 
     public static ValidationResult addAvailableSlots(SlotAvailability request, UUID id) {
         DatabaseMock databaseMock = DatabaseMock.getInstance();
-        //check if user id is valid and corresponding user exists
-        if(!isValidUUID(id) || !isValidUser(id, databaseMock.getUsers())){
-            return ImmutableValidationResult.builder()
-                    .errors(Collections.singletonList(Constants.INVALID_USER))
-                    .entity(request).build();
-        }
         HashMap<LocalDate, UserDateInfo> dateTimeMap = databaseMock.getUserSlotInfo().get(id);
         UserDateInfo userDateInfo = dateTimeMap.getOrDefault(request.getDate(),
                 ImmutableUserDateInfo.builder()
@@ -75,12 +67,6 @@ public class DatabaseMockHelper {
         UUID attendeeId = request.getAttendee();
         DatabaseMock databaseMock = DatabaseMock.getInstance();
 
-        //check if host user id is valid and corresponding host user exists
-        if(!isValidUUID(hostId) || !isValidUser(hostId, databaseMock.getUsers())){
-            return ImmutableValidationResult.builder()
-                    .errors(Collections.singletonList(INVALID_HOST))
-                    .entity(request).build();
-        }
         //check if attendee user id is valid and corresponding attendee user exists
         if(!isValidUUID(attendeeId) || !isValidUser(attendeeId, databaseMock.getUsers())){
             return ImmutableValidationResult.builder()

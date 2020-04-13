@@ -3,7 +3,6 @@ package com.calendarApp.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;
-import com.calendarApp.model.ImmutableBooking;
 
 import java.sql.Time;
 import java.time.LocalDate;

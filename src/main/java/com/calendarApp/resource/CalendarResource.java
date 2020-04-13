@@ -13,6 +13,9 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.calendarApp.helper.LoginHelper.processUserToken;
+import static com.calendarApp.helper.LoginHelper.validateAndSlideSession;
+
 @Path("/v1/calendar")
 @Produces(MediaType.APPLICATION_JSON)
 public class CalendarResource {
@@ -27,6 +30,8 @@ public class CalendarResource {
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
+            // if user is created create valid session and return token Id
+            result = processUserToken((User)result.getEntity());
             LOGGER.log(Level.INFO, "Successfully created User");
             return Response.status(Response.Status.CREATED).entity(result).build();
         } catch (Exception ex) {
@@ -36,9 +41,13 @@ public class CalendarResource {
 
     @PUT
     @Path("/user/{id}/slots")
-    public Response addSlotsAvailability(SlotAvailability request, @PathParam("id") UUID id) {
+    public Response addSlotsAvailability(SlotAvailability request, @PathParam("id") UUID id, @HeaderParam("token") UUID token) {
         try {
-            ValidationResult result = DatabaseMockHelper.addAvailableSlots(request, id);
+            ValidationResult result = validateAndSlideSession(token, id);
+            if(!result.getErrors().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
+            }
+            result = DatabaseMockHelper.addAvailableSlots(request, id);
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
@@ -51,9 +60,13 @@ public class CalendarResource {
 
     @GET
     @Path("/user/{id}/slots")
-    public Response getAvailableSlots(BookingRequest request, @PathParam("id") UUID id) {
+    public Response getAvailableSlots(BookingRequest request, @PathParam("id") UUID id, @HeaderParam("token") UUID token) {
         try {
-            ValidationResult result = DatabaseMockHelper.getAvailableSlots(id);
+            ValidationResult result = validateAndSlideSession(token, id);
+            if(!result.getErrors().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
+            }
+            result = DatabaseMockHelper.getAvailableSlots(id);
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
@@ -65,9 +78,13 @@ public class CalendarResource {
 
     @PUT
     @Path("/user/{id}/reserve")
-    public Response bookSlotsAvailability(BookingRequest request, @PathParam("id") UUID hostId) {
+    public Response bookSlotsAvailability(BookingRequest request, @PathParam("id") UUID hostId, @HeaderParam("token") UUID token) {
         try {
-            ValidationResult result = DatabaseMockHelper.processReserveRequest(request, hostId);
+            ValidationResult result = validateAndSlideSession(token, hostId);
+            if(!result.getErrors().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
+            }
+            result = DatabaseMockHelper.processReserveRequest(request, hostId);
             if(!result.getErrors().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             }
